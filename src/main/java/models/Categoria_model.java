@@ -15,8 +15,7 @@ public class Categoria_model {
     public List<Categoria_dtos> listarTodas() {
         List<Categoria_dtos> lista = new ArrayList<>();
 
-        String sql = "SELECT id_categoria, nombre, descripcion, estado "
-                   + "FROM categoria";
+        String sql = "SELECT id_categoria, nombre, descripcion, estado FROM categoria";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -34,7 +33,7 @@ public class Categoria_model {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Categoria_dtos c = mapRowToDTO(rs);
+                Categoria_dtos c = convertirFilaACategoriaDTO(rs);
                 lista.add(c);
             }
 
@@ -52,9 +51,7 @@ public class Categoria_model {
     public List<Categoria_dtos> listarActivas() {
         List<Categoria_dtos> lista = new ArrayList<>();
 
-        String sql = "SELECT id_categoria, nombre, descripcion, estado "
-                   + "FROM categoria "
-                   + "WHERE estado = 'ACTIVA'";
+        String sql = "SELECT id_categoria, nombre, descripcion, estado FROM categoria WHERE estado = 'ACTIVA'";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -72,7 +69,7 @@ public class Categoria_model {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Categoria_dtos c = mapRowToDTO(rs);
+                Categoria_dtos c = convertirFilaACategoriaDTO(rs);
                 lista.add(c);
             }
 
@@ -88,9 +85,7 @@ public class Categoria_model {
 
     // Buscar una categoría por su ID
     public Categoria_dtos buscarPorId(int idCategoria) {
-        String sql = "SELECT id_categoria, nombre, descripcion, estado "
-                   + "FROM categoria "
-                   + "WHERE id_categoria = ?";
+        String sql = "SELECT id_categoria, nombre, descripcion, estado FROM categoria WHERE id_categoria = ?";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -109,7 +104,7 @@ public class Categoria_model {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                return mapRowToDTO(rs);
+                return convertirFilaACategoriaDTO(rs);
             }
 
         } catch (SQLException e) {
@@ -122,7 +117,7 @@ public class Categoria_model {
         return null;
     }
 
-    // Verificar si ya existe una categoría con ese nombre (para respetar UNIQUE nombre)
+    // Verificar si ya existe una categoría con ese nombre (para respetar UNIQUE nombre
     public boolean existeNombre(String nombre) {
         String sql = "SELECT COUNT(*) AS total "
                    + "FROM categoria "
@@ -137,7 +132,7 @@ public class Categoria_model {
             conn = conexionMySQL.conectar();
             if (conn == null) {
                 System.out.println("No se pudo obtener conexión en Categoria_model.existeNombre");
-                return true; // por seguridad asumimos que existe
+                return true;
             }
 
             ps = conn.prepareStatement(sql);
@@ -179,7 +174,7 @@ public class Categoria_model {
             ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, categoria.getNombre());
             ps.setString(2, categoria.getDescripcion());
-            // si viene null, usamos ACTIVA por defecto
+            
             String estado = categoria.getEstado();
             if (estado == null || estado.isEmpty()) {
                 estado = "ACTIVA";
@@ -210,10 +205,9 @@ public class Categoria_model {
         }
     }
 
-    // Actualizar nombre / descripción / estado de una categoría
+    // Metodo para actualizar nombre / descripción / estado de una categoría
     public boolean actualizar(Categoria_dtos categoria) {
-        String sql = "UPDATE categoria SET nombre = ?, descripcion = ?, estado = ? "
-                   + "WHERE id_categoria = ?";
+        String sql = "UPDATE categoria SET nombre = ?, descripcion = ?, estado = ? WHERE id_categoria = ?";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -245,7 +239,7 @@ public class Categoria_model {
         }
     }
 
-    // Cambiar sólo el estado (ACTIVA / INACTIVA)
+    // Cambiar sólo el estado de ACTIVA a INACTIVA
     public boolean cambiarEstado(int idCategoria, String nuevoEstado) {
         String sql = "UPDATE categoria SET estado = ? WHERE id_categoria = ?";
 
@@ -277,9 +271,9 @@ public class Categoria_model {
         }
     }
 
-    // ----- Métodos privados de apoyo -----
+    // Métodos privados de apoyo 
 
-    private Categoria_dtos mapRowToDTO(ResultSet rs) throws SQLException {
+    private Categoria_dtos convertirFilaACategoriaDTO(ResultSet rs) throws SQLException {
         Categoria_dtos c = new Categoria_dtos();
         c.setIdCategoria(rs.getInt("id_categoria"));
         c.setNombre(rs.getString("nombre"));

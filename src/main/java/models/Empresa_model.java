@@ -19,9 +19,7 @@ public class Empresa_model {
     public List<Empresa_dtos> listarTodas() {
         List<Empresa_dtos> lista = new ArrayList<>();
 
-        String sql = "SELECT id_empresa, nombre, descripcion, id_pais, "
-                   + "porcentaje_comision, fecha_registro "
-                   + "FROM empresa";
+        String sql = "SELECT id_empresa, nombre, descripcion, id_pais, porcentaje_comision, fecha_registro FROM empresa";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -39,7 +37,7 @@ public class Empresa_model {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Empresa_dtos e = mapRowToDTO(rs);
+                Empresa_dtos e = convertirFilaAEmpresaDTO(rs);
                 lista.add(e);
             }
 
@@ -55,9 +53,7 @@ public class Empresa_model {
 
     // Buscar empresa por id
     public Empresa_dtos buscarPorId(int idEmpresa) {
-        String sql = "SELECT id_empresa, nombre, descripcion, id_pais, "
-                   + "porcentaje_comision, fecha_registro "
-                   + "FROM empresa WHERE id_empresa = ?";
+        String sql = "SELECT id_empresa, nombre, descripcion, id_pais,porcentaje_comision, fecha_registro FROM empresa WHERE id_empresa = ?";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -76,7 +72,7 @@ public class Empresa_model {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                return mapRowToDTO(rs);
+                return convertirFilaAEmpresaDTO(rs);
             }
 
         } catch (SQLException e) {
@@ -91,9 +87,7 @@ public class Empresa_model {
 
     // Insertar nueva empresa
     public Empresa_dtos insertar(Empresa_dtos empresa) {
-        String sql = "INSERT INTO empresa "
-                   + "(nombre, descripcion, id_pais, porcentaje_comision) "
-                   + "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO empresa (nombre, descripcion, id_pais, porcentaje_comision) VALUES (?, ?, ?, ?)";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -148,9 +142,7 @@ public class Empresa_model {
 
     // Actualizar empresa (por ejemplo para cambiar comisión o descripción)
     public boolean actualizar(Empresa_dtos empresa) {
-        String sql = "UPDATE empresa SET nombre = ?, descripcion = ?, "
-                   + "id_pais = ?, porcentaje_comision = ? "
-                   + "WHERE id_empresa = ?";
+        String sql = "UPDATE empresa SET nombre = ?, descripcion = ?, id_pais = ?, porcentaje_comision = ? WHERE id_empresa = ?";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -191,11 +183,9 @@ public class Empresa_model {
         }
     }
 
-    // (Opcional) registrar vínculo empresa-usuario responsable en tabla empresa_usuario
+    // Metodo para registrar vínculo empresa-usuario responsable en tabla empresa_usuario
     public boolean registrarResponsableEmpresa(Empresa_usuario_dtos eu) {
-        String sql = "INSERT INTO empresa_usuario "
-                   + "(id_empresa, id_usuario, es_responsable) "
-                   + "VALUES (?, ?, ?)";
+        String sql = "INSERT INTO empresa_usuario (id_empresa, id_usuario, es_responsable) VALUES (?, ?, ?)";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -226,7 +216,7 @@ public class Empresa_model {
         }
     }
 
-    private Empresa_dtos mapRowToDTO(ResultSet rs) throws SQLException {
+    private Empresa_dtos convertirFilaAEmpresaDTO(ResultSet rs) throws SQLException {
         Empresa_dtos e = new Empresa_dtos();
         e.setIdEmpresa(rs.getInt("id_empresa"));
         e.setNombre(rs.getString("nombre"));

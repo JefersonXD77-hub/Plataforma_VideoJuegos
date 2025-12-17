@@ -34,7 +34,7 @@ public class Usuario_model {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Usuario_dtos u = mapRowToDTO(rs);
+                Usuario_dtos u = crearUsuarioDesdeFila(rs);
                 lista.add(u);
             }
 
@@ -69,7 +69,7 @@ public class Usuario_model {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                return mapRowToDTO(rs);
+                return crearUsuarioDesdeFila(rs);
             }
 
         } catch (SQLException e) {
@@ -104,7 +104,7 @@ public class Usuario_model {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                return mapRowToDTO(rs);
+                return crearUsuarioDesdeFila(rs);
             }
 
         } catch (SQLException e) {
@@ -150,7 +150,7 @@ public class Usuario_model {
     }
 
     // Mapeo ResultSet -> DTO
-    private Usuario_dtos mapRowToDTO(ResultSet rs) throws SQLException {
+    private Usuario_dtos crearUsuarioDesdeFila(ResultSet rs) throws SQLException {
         Usuario_dtos u = new Usuario_dtos();
         u.setIdUsuario(rs.getInt("id_usuario"));
         u.setIdRol(rs.getInt("id_rol"));
