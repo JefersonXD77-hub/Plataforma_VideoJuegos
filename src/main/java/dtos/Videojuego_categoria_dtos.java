@@ -1,14 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dtos;
 
-/**
- *
- * @author aguil
- */
 public class Videojuego_categoria_dtos {
-    
+
+    private int idVideojuego;
+    private int idCategoria;
+
+    public int getIdVideojuego() {
+        return idVideojuego;
+    }
+
+    public void setIdVideojuego(int idVideojuego) {
+        this.idVideojuego = idVideojuego;
+    }
+
+    public int getIdCategoria() {
+        return idCategoria;
+    }
+
+    public void setIdCategoria(int idCategoria) {
+        this.idCategoria = idCategoria;
+    }
+
 }
