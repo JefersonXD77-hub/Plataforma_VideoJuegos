@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Categoria_model {
 
-    // Listar TODAS las categorías (activas e inactivas)
+    // Listar TODAS las categorías 
     public List<Categoria_dtos> listarTodas() {
         List<Categoria_dtos> lista = new ArrayList<>();
 
@@ -47,7 +47,7 @@ public class Categoria_model {
         return lista;
     }
 
-    // Listar solo categorías ACTIVAS (útil para combos en formularios)
+    // Listar solo categorías ACTIVAS }
     public List<Categoria_dtos> listarActivas() {
         List<Categoria_dtos> lista = new ArrayList<>();
 
@@ -117,7 +117,7 @@ public class Categoria_model {
         return null;
     }
 
-    // Verificar si ya existe una categoría con ese nombre (para respetar UNIQUE nombre
+    // Verificar si ya existe una categoría con ese nombre 
     public boolean existeNombre(String nombre) {
         String sql = "SELECT COUNT(*) AS total "
                    + "FROM categoria "
@@ -271,7 +271,7 @@ public class Categoria_model {
         }
     }
 
-    // Métodos privados de apoyo 
+    
 
     private Categoria_dtos convertirFilaACategoriaDTO(ResultSet rs) throws SQLException {
         Categoria_dtos c = new Categoria_dtos();

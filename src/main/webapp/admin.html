@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Administrador - Sbox Xtation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+  <header class="store-header">
+    <div class="logo">Sbox Xtation - Admin</div>
+    <div class="user-actions">
+      <button onclick="window.location.href='tienda.html'">Ver tienda</button>
+      <button onclick="window.location.href='index.html'">Salir al inicio</button>
+    </div>
+  </header>
+
+  <main class="store-layout">
+    <section class="store-main">
+      <h1>Panel del Administrador del Sistema</h1>
+      
+    </section>
+      <section class="store-main">
+  <h2>Registrar nueva empresa</h2>
+
+  <form id="formNuevaEmpresa">
+    <h3>Empresa</h3>
+    <label>Nombre</label>
+    <input type="text" id="empNombre" required>
+
+    <label>Descripción</label>
+    <input type="text" id="empDescripcion">
+
+    <label>ID País (opcional)</label>
+    <input type="number" id="empPais">
+
+    <label>% Comisión (opcional)</label>
+    <input type="number" step="0.01" id="empComision">
+
+    <h3>Usuario responsable</h3>
+    <label>Nombre completo</label>
+    <input type="text" id="usrNombre" required>
+
+    <label>Correo</label>
+    <input type="email" id="usrCorreo" required>
+
+    <label>Contraseña</label>
+    <input type="password" id="usrPassword" required>
+
+    <label>Fecha nacimiento</label>
+    <input type="date" id="usrFechaNac" required>
+
+    <label>Teléfono (opcional)</label>
+    <input type="text" id="usrTelefono">
+
+    <label>Nickname (opcional)</label>
+    <input type="text" id="usrNick">
+
+    <button type="submit">Crear empresa</button>
+  </form>
+
+  <div id="msgEmpresa" style="margin-top:10px;"></div>
+</section>
+
+<script src="js/admin.js"></script>
+
+  </main>
+
+</body>
+</html>

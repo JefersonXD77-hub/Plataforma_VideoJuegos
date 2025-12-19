@@ -140,7 +140,7 @@ public class Empresa_model {
         }
     }
 
-    // Actualizar empresa (por ejemplo para cambiar comisión o descripción)
+    // Actualizar empresa
     public boolean actualizar(Empresa_dtos empresa) {
         String sql = "UPDATE empresa SET nombre = ?, descripcion = ?, id_pais = ?, porcentaje_comision = ? WHERE id_empresa = ?";
 

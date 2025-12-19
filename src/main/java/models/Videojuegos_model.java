@@ -155,7 +155,7 @@ public class Videojuegos_model {
                 ps.setNull(7, java.sql.Types.DATE);
             }
 
-            // estado: si viene null en el DTO, usamos ACTIVO por defecto
+          
             String estado = juego.getEstado();
             if (estado == null || estado.isEmpty()) {
                 estado = "ACTIVO";
@@ -181,7 +181,7 @@ public class Videojuegos_model {
             e.printStackTrace();
             return null;
         } finally {
-            // rs aquí es solo para las keys generadas
+         
             try {
                 if (rs != null) {
                     rs.close();
@@ -405,7 +405,7 @@ public class Videojuegos_model {
             }
         } catch (Exception ex) {
         }
-        // aquí se llama a tu método desconectar de la clase ConexionMySQL
+       
         conexionMySQL.desconectar(conn);
     }
 

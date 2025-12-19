@@ -1,4 +1,3 @@
-
 package models;
 
 import db.ConexionMySQL;
@@ -48,6 +47,107 @@ public class Usuario_model {
         return lista;
     }
 
+    //Insertar a un usuario.
+    public boolean existeCorreo(String correo) {
+
+        String sql = "SELECT 1 FROM usuario WHERE CORREO = ? limit 1";
+
+        ConexionMySQL conexionMySQL = new ConexionMySQL();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+
+            conn = conexionMySQL.conectar();
+            if (conn == null) {
+                return false;
+            }
+
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, correo.trim().toLowerCase());
+            rs = ps.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+
+        } finally {
+            cerrarRecursos(rs, ps, conn, conexionMySQL);
+        }
+    }   
+    
+        
+
+    public Usuario_dtos insertar(Usuario_dtos u) {
+        String sql = "INSERT INTO usuario (id_rol, nickname, nombre_completo, correo, password, fecha_nacimiento, telefono, id_pais, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        ConexionMySQL conexionMySQL = new ConexionMySQL();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = conexionMySQL.conectar();
+            if (conn == null) {
+                return null;
+            }
+
+            ps = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
+
+            ps.setInt(1, u.getIdRol());
+            ps.setString(2, u.getNickname());
+            ps.setString(3, u.getNombreCompleto());
+            ps.setString(4, u.getCorreo().trim().toLowerCase());
+            ps.setString(5, u.getPassword());
+            ps.setDate(6, u.getFechaNacimiento());
+
+            if (u.getTelefono() != null && !u.getTelefono().isBlank()) {
+                ps.setString(7, u.getTelefono());
+            } else {
+                ps.setNull(7, java.sql.Types.VARCHAR);
+            }
+
+            if (u.getIdPais() != null) {
+                ps.setInt(8, u.getIdPais());
+            } else {
+                ps.setNull(8, java.sql.Types.INTEGER);
+            }
+
+            ps.setString(9, u.getEstado() != null ? u.getEstado() : "ACTIVO");
+
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
+                return null;
+            }
+
+            rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                u.setIdUsuario(rs.getInt(1));
+            }
+            return u;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception ex) {
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
+            conexionMySQL.desconectar(conn);
+        }
+    }
+
     // Buscar por id
     public Usuario_dtos buscarPorId(int idUsuario) {
         String sql = "SELECT id_usuario, id_rol, nickname, nombre_completo, correo, fecha_nacimiento, telefono, id_pais, fecha_registro, estado FROM usuario WHERE id_usuario = ?";
@@ -82,7 +182,7 @@ public class Usuario_model {
         return null;
     }
 
-    // Buscar por correo y password (para login simple)
+    // Buscar por correo y password
     public Usuario_dtos buscarPorCorreoYPassword(String correo, String password) {
         String sql = "SELECT id_usuario, id_rol, nickname, nombre_completo, correo, fecha_nacimiento, telefono, id_pais, fecha_registro, estado FROM usuario WHERE correo = ? AND password = ? AND estado = 'ACTIVO'";
 
@@ -144,12 +244,17 @@ public class Usuario_model {
             e.printStackTrace();
             return false;
         } finally {
-            try { if (ps != null) ps.close(); } catch (Exception ex) {}
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
             conexionMySQL.desconectar(conn);
         }
     }
 
-    // Mapeo ResultSet -> DTO
+    
     private Usuario_dtos crearUsuarioDesdeFila(ResultSet rs) throws SQLException {
         Usuario_dtos u = new Usuario_dtos();
         u.setIdUsuario(rs.getInt("id_usuario"));
@@ -171,9 +276,18 @@ public class Usuario_model {
     }
 
     private void cerrarRecursos(ResultSet rs, PreparedStatement ps, Connection conn, ConexionMySQL conexionMySQL) {
-        try { if (rs != null) rs.close(); } catch (Exception ex) {}
-        try { if (ps != null) ps.close(); } catch (Exception ex) {}
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+        } catch (Exception ex) {
+        }
+        try {
+            if (ps != null) {
+                ps.close();
+            }
+        } catch (Exception ex) {
+        }
         conexionMySQL.desconectar(conn);
     }
 }
-

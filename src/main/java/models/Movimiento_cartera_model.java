@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Movimiento_cartera_model {
 
-    // Listar todos los movimientos de un usuario (más recientes primero)
+    // Listar todos los movimientos de un usuario
     public List<Movimiento_cartera_dtos> listarPorUsuario(int idUsuario) {
         List<Movimiento_cartera_dtos> lista = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class Movimiento_cartera_model {
         return lista;
     }
 
-    // Listar movimientos filtrando por rango de fechas (para reportes)
+    // Listar movimientos filtrando por rango de fechas
     public List<Movimiento_cartera_dtos> listarPorUsuarioYRangoFechas(int idUsuario, Timestamp desde, Timestamp hasta) {
         List<Movimiento_cartera_dtos> lista = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class Movimiento_cartera_model {
         return lista;
     }
 
-    // Registrar movimiento genérico (RECARGA, COMPRA, AJUSTE)
+    // Registrar movimiento
     public boolean registrarMovimiento(Movimiento_cartera_dtos mov) {
         String sql = "INSERT INTO movimiento_cartera (id_usuario, id_compra, tipo, monto, descripcion) VALUES (?, ?, ?, ?, ?)";
 
@@ -129,7 +129,7 @@ public class Movimiento_cartera_model {
         }
     }
 
-    // ---- Métodos privados de apoyo ----
+  
 
     private Movimiento_cartera_dtos crearMovimientoDesdeFila(ResultSet rs) throws SQLException {
         Movimiento_cartera_dtos mov = new Movimiento_cartera_dtos();

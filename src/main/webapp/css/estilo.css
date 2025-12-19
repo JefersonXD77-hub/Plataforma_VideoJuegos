@@ -1,0 +1,138 @@
+/* Mi estilos */
+body {
+  font-family: Arial, sans-serif;
+  background-image: url("../img/fondo.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #f1f1f1;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+}
+
+.container-tienda {
+  max-width: 1100px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input {
+  width: 300px;
+  max-width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+button {
+  width: auto;
+  padding: 8px 12px;
+  margin-top: 15px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.mensaje-error {
+  margin-top: 10px;
+  color: #ff5555;
+}
+
+
+.user-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.user-actions button {
+  width: auto;
+  padding: 8px 12px;
+  margin-top: 0;
+}
+
+
+#formNuevaEmpresa input {
+  width: 320px;
+  max-width: 100%;
+}
+
+#formNuevaEmpresa button[type="submit"] {
+  width: auto;
+  padding: 8px 14px;
+}
+
+/* Estilos específicos para la tienda */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  width: auto;
+  min-width: 320px;
+}
+
+.search-bar button {
+  margin-top: 0;
+}
+
+.tabla-videojuegos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.tabla-videojuegos th,
+.tabla-videojuegos td {
+  border: 1px solid #444;
+  padding: 8px;
+  text-align: left;
+}
+
+.tabla-videojuegos th {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tabla-videojuegos tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.btn-detalle {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.detalle-juego {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+}
+
+.oculto {
+  display: none;
+}
+
+.mensaje-info {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #f1f1f1;
+}
+
+/* Fin de estilos */

@@ -53,7 +53,7 @@ public class Videojuego_Categoria_model {
         return lista;
     }
 
-    // Reemplaza TODAS las categorías de un videojuego por la nueva lista (transacción)
+    
     public boolean reemplazarCategorias(int idVideojuego, List<Integer> idsCategorias) {
         String sqlDelete = "DELETE FROM videojuego_categoria WHERE id_videojuego = ?";
         String sqlInsert = "INSERT INTO videojuego_categoria (id_videojuego, id_categoria) VALUES (?, ?)";
@@ -72,12 +72,12 @@ public class Videojuego_Categoria_model {
 
             conn.setAutoCommit(false);
 
-            // 1) Borrar categorías actuales
+          
             psDelete = conn.prepareStatement(sqlDelete);
             psDelete.setInt(1, idVideojuego);
             psDelete.executeUpdate();
 
-            // 2) Insertar las nuevas (si la lista está vacía, solo se borran)
+           
             if (idsCategorias != null) {
                 psInsert = conn.prepareStatement(sqlInsert);
                 for (Integer idCat : idsCategorias) {
@@ -107,7 +107,7 @@ public class Videojuego_Categoria_model {
         }
     }
 
-    // (Opcional) Agregar una sola relación videojuego-categoría
+
     public boolean agregarCategoria(Videojuego_categoria_dtos vc) {
         String sql = "INSERT INTO videojuego_categoria (id_videojuego, id_categoria) VALUES (?, ?)";
 

@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tienda - Sbox Xtation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>Tienda de Videojuegos</h1>
+    <p>Explora los videojuegos disponibles en la plataforma.</p>
+
+    
+    <div class="search-bar">
+      <input type="text" id="txtBuscar" placeholder="Buscar por título o descripción...">
+      <button id="btnBuscar">Buscar</button>
+      <button id="btnLimpiar">Limpiar</button>
+    </div>
+
+    <div id="mensaje" class="mensaje-info"></div>
+
+    <table class="tabla-videojuegos">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Precio</th>
+          <th>Clasificación</th>
+          <th>Fecha lanzamiento</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaVideojuegosBody">
+      </tbody>
+    </table>
+
+    <div id="detalleJuego" class="detalle-juego oculto">
+      <h2>Detalle del videojuego</h2>
+      <p><strong>Título:</strong> <span id="detalleTitulo"></span></p>
+      <p><strong>Descripción:</strong></p>
+      <p id="detalleDescripcion"></p>
+      <p><strong>Requisitos mínimos:</strong></p>
+      <p id="detalleRecursos"></p>
+    </div>
+  </div>
+
+  <script src="js/tienda.js"></script>
+</body>
+</html>

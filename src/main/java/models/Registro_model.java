@@ -72,7 +72,7 @@ public class Registro_model {
             // Iniciamos transacción
             conn.setAutoCommit(false);
 
-            // 1) Insertar usuario
+            //  Insertar usuario
             psUsuario = conn.prepareStatement(sqlInsertUsuario, PreparedStatement.RETURN_GENERATED_KEYS);
             psUsuario.setInt(1, idRolComun);
             psUsuario.setString(2, usuario.getNickname());
@@ -105,17 +105,17 @@ public class Registro_model {
                 return null;
             }
 
-            // 2) Crear cartera
+            //  Crear cartera
             psCartera = conn.prepareStatement(sqlInsertCartera);
             psCartera.setInt(1, idGenerado);
             psCartera.executeUpdate();
 
-            // 3) Crear preferencias_usuario
+            //  Crear preferencias_usuario
             psPref = conn.prepareStatement(sqlInsertPreferencias);
             psPref.setInt(1, idGenerado);
             psPref.executeUpdate();
 
-            // Si todo sale bien, confirmamos la transacción
+           
             conn.commit();
             conn.setAutoCommit(true);
 
