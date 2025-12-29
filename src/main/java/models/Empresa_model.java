@@ -1,4 +1,3 @@
-
 package models;
 
 import db.ConexionMySQL;
@@ -134,8 +133,18 @@ public class Empresa_model {
             e.printStackTrace();
             return null;
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception ex) {}
-            try { if (ps != null) ps.close(); } catch (Exception ex) {}
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception ex) {
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
             conexionMySQL.desconectar(conn);
         }
     }
@@ -178,7 +187,12 @@ public class Empresa_model {
             e.printStackTrace();
             return false;
         } finally {
-            try { if (ps != null) ps.close(); } catch (Exception ex) {}
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
             conexionMySQL.desconectar(conn);
         }
     }
@@ -211,7 +225,188 @@ public class Empresa_model {
             e.printStackTrace();
             return false;
         } finally {
-            try { if (ps != null) ps.close(); } catch (Exception ex) {}
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
+            conexionMySQL.desconectar(conn);
+        }
+    }
+
+    public java.math.BigDecimal obtenerComisionEmpresa(int idEmpresa) {
+        String sql = "SELECT porcentaje_comision FROM empresa WHERE id_empresa = ?";
+
+        db.ConexionMySQL conexionMySQL = new db.ConexionMySQL();
+        java.sql.Connection conn = null;
+        java.sql.PreparedStatement ps = null;
+        java.sql.ResultSet rs = null;
+
+        try {
+            conn = conexionMySQL.conectar();
+            if (conn == null) {
+                return null;
+            }
+
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idEmpresa);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                BigDecimal c = rs.getBigDecimal("porcentaje_comision");
+                return c;
+            }
+            return null;
+
+        } catch (java.sql.SQLException e) {
+            System.out.println("Error en Empresa_model.obtenerComisionEmpresa(): " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception ex) {
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
+            conexionMySQL.desconectar(conn);
+        }
+    }
+
+    public boolean actualizarSoloComision(int idEmpresa, java.math.BigDecimal nuevaComision) {
+        String sql = "UPDATE empresa SET porcentaje_comision = ? WHERE id_empresa = ?";
+
+        db.ConexionMySQL conexionMySQL = new db.ConexionMySQL();
+        java.sql.Connection conn = null;
+        java.sql.PreparedStatement ps = null;
+
+        try {
+            conn = conexionMySQL.conectar();
+            if (conn == null) {
+                return false;
+            }
+
+            ps = conn.prepareStatement(sql);
+            if (nuevaComision == null) {
+                ps.setNull(1, java.sql.Types.DECIMAL);
+            } else {
+                ps.setBigDecimal(1, nuevaComision);
+            }
+            ps.setInt(2, idEmpresa);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (java.sql.SQLException e) {
+            System.out.println("Error en Empresa_model.actualizarSoloComision(): " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
+            conexionMySQL.desconectar(conn);
+        }
+    }
+
+    public int clampComisionesMayoresA(java.sql.Connection conn, java.math.BigDecimal nuevaGlobal) throws java.sql.SQLException {
+        String sql = "UPDATE empresa SET porcentaje_comision = ? WHERE porcentaje_comision > ?";
+
+        java.sql.PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setBigDecimal(1, nuevaGlobal);
+            ps.setBigDecimal(2, nuevaGlobal);
+            return ps.executeUpdate();
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
+        }
+    }
+
+    public int clampComisionesMayoresA(java.math.BigDecimal nuevaGlobal) {
+        String sql = "UPDATE empresa SET porcentaje_comision = ? WHERE porcentaje_comision > ?";
+
+        db.ConexionMySQL conexionMySQL = new db.ConexionMySQL();
+        java.sql.Connection conn = null;
+        java.sql.PreparedStatement ps = null;
+
+        try {
+            conn = conexionMySQL.conectar();
+            if (conn == null) {
+                return 0;
+            }
+
+            ps = conn.prepareStatement(sql);
+            ps.setBigDecimal(1, nuevaGlobal);
+            ps.setBigDecimal(2, nuevaGlobal);
+
+            return ps.executeUpdate();
+
+        } catch (java.sql.SQLException e) {
+            System.out.println("Error en Empresa_model.clampComisionesMayoresA(): " + e.getMessage());
+            e.printStackTrace();
+            return 0;
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
+            conexionMySQL.desconectar(conn);
+        }
+    }
+
+    public boolean existeEmpresa(int idEmpresa) {
+        String sql = "SELECT 1 FROM empresa WHERE id_empresa = ?";
+
+        db.ConexionMySQL conexionMySQL = new db.ConexionMySQL();
+        java.sql.Connection conn = null;
+        java.sql.PreparedStatement ps = null;
+        java.sql.ResultSet rs = null;
+
+        try {
+            conn = conexionMySQL.conectar();
+            if (conn == null) {
+                return false;
+            }
+
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idEmpresa);
+            rs = ps.executeQuery();
+            return rs.next();
+
+        } catch (java.sql.SQLException e) {
+            System.out.println("Error en Empresa_model.existeEmpresa(): " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception ex) {
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
             conexionMySQL.desconectar(conn);
         }
     }
@@ -222,17 +417,29 @@ public class Empresa_model {
         e.setNombre(rs.getString("nombre"));
         e.setDescripcion(rs.getString("descripcion"));
         int idPais = rs.getInt("id_pais");
-        if (rs.wasNull()) e.setIdPais(null);
-        else e.setIdPais(idPais);
+        if (rs.wasNull()) {
+            e.setIdPais(null);
+        } else {
+            e.setIdPais(idPais);
+        }
         e.setPorcentajeComision(rs.getBigDecimal("porcentaje_comision"));
         e.setFechaRegistro(rs.getTimestamp("fecha_registro"));
         return e;
     }
 
     private void cerrarRecursos(ResultSet rs, PreparedStatement ps, Connection conn, ConexionMySQL conexionMySQL) {
-        try { if (rs != null) rs.close(); } catch (Exception ex) {}
-        try { if (ps != null) ps.close(); } catch (Exception ex) {}
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+        } catch (Exception ex) {
+        }
+        try {
+            if (ps != null) {
+                ps.close();
+            }
+        } catch (Exception ex) {
+        }
         conexionMySQL.desconectar(conn);
     }
 }
-

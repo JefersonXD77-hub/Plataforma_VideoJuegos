@@ -37,4 +37,11 @@ temporales/
 .DS_Store
 Thumbs.db
 
+# Angular
+plataforma-videojuegos-frontend/node_modules/
+plataforma-videojuegos-frontend/.angular/
+plataforma-videojuegos-frontend/dist/
+plataforma-videojuegos-frontend/.cache/
+plataforma-videojuegos-frontend/.vite/
+
 

@@ -86,6 +86,85 @@ public class Videojuegos_model {
         return lista;
     }
 
+    //Metodo para buscador de tienda
+    public List<Videojuegos_dtos> buscarTienda(String titulo, Integer idEmpresa, Integer idCategoria, BigDecimal precioMin, BigDecimal precioMax) {
+        List<Videojuegos_dtos> lista = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT DISTINCT v.id_videojuego, v.id_empresa, v.titulo, v.descripcion, v.precio, v.recursos_minimos, v.id_clasificacion, v.fecha_lanzamiento, v.estado, v.fecha_creacion ");
+        sql.append("FROM videojuego v ");
+        if (idCategoria != null) {
+            sql.append("JOIN videojuego_categoria vc ON vc.id_videojuego = v.id_videojuego AND vc.estado='APROBADA' ");
+        }
+        sql.append("WHERE v.estado='ACTIVO' ");
+        if (titulo != null && !titulo.isBlank()) {
+            sql.append("AND v.titulo LIKE ? ");
+        }
+        if (idEmpresa != null) {
+            sql.append("AND v.id_empresa = ? ");
+        }
+        if (idCategoria != null) {
+            sql.append("AND vc.id_categoria = ? ");
+        }
+        if (precioMin != null) {
+            sql.append("AND v.precio >= ? ");
+        }
+        if (precioMax != null) {
+            sql.append("AND v.precio <= ? ");
+        }
+        sql.append("ORDER BY v.titulo ASC");
+
+        ConexionMySQL conexionMySQL = new ConexionMySQL();
+        Connection conectado = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conectado = conexionMySQL.conectar();
+            if (conectado == null) return lista;
+
+            ps = conectado.prepareStatement(sql.toString());
+            int idx = 1;
+            if (titulo != null && !titulo.isBlank()) {
+                ps.setString(idx++, "%" + titulo.trim() + "%");
+            }
+            if (idEmpresa != null) {
+                ps.setInt(idx++, idEmpresa);
+            }
+            if (idCategoria != null) {
+                ps.setInt(idx++, idCategoria);
+            }
+            if (precioMin != null) {
+                ps.setBigDecimal(idx++, precioMin);
+            }
+            if (precioMax != null) {
+                ps.setBigDecimal(idx++, precioMax);
+            }
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Videojuegos_dtos atributoVid = new Videojuegos_dtos();
+                atributoVid.setIdVideojuego(rs.getInt("id_videojuego"));
+                atributoVid.setIdEmpresa(rs.getInt("id_empresa"));
+                atributoVid.setTitulo(rs.getString("titulo"));
+                atributoVid.setDescripcion(rs.getString("descripcion"));
+                atributoVid.setPrecio(rs.getBigDecimal("precio"));
+                atributoVid.setRecursosMinimos(rs.getString("recursos_minimos"));
+                atributoVid.setIdClasificacion(rs.getInt("id_clasificacion"));
+                atributoVid.setFechaLanzamiento(rs.getDate("fecha_lanzamiento"));
+                atributoVid.setEstado(rs.getString("estado"));
+                atributoVid.setFechaCreacion(rs.getTimestamp("fecha_creacion"));
+                lista.add(atributoVid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            cerrarRecursos(rs, ps, conectado, conexionMySQL);
+        }
+
+        return lista;
+    }
+    
     //Método para listar los videojuegos de una empresa en específico.
     public List<Videojuegos_dtos> listarPorEmpresa(int idEmpresa) {
         List<Videojuegos_dtos> lista = new ArrayList<>();

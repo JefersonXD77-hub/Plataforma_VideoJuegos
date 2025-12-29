@@ -1,4 +1,3 @@
-
 package models;
 
 import db.ConexionMySQL;
@@ -43,8 +42,18 @@ public class Cartera_model {
             System.out.println("Error en Cartera_model.buscarPorIdUsuario(): " + e.getMessage());
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception ex) {}
-            try { if (ps != null) ps.close(); } catch (Exception ex) {}
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception ex) {
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
             conexionMySQL.desconectar(conn);
         }
 
@@ -57,61 +66,74 @@ public class Cartera_model {
             return false;
         }
 
-        String sqlUpdateCartera = "UPDATE cartera SET saldo = saldo + ?, fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_usuario = ?";
-
-        String sqlInsertMovimiento = "INSERT INTO movimiento_cartera (id_usuario, id_compra, tipo, monto, descripcion) VALUES (?, NULL, 'RECARGA', ?, ?)";
+        String sqlUpdateCartera
+                = "UPDATE cartera SET saldo = saldo + ?, fecha_actualizacion = CURRENT_TIMESTAMP WHERE id_usuario = ?";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
-        Connection conectar = null;
+        Connection conn = null;
         PreparedStatement psUpdate = null;
-        PreparedStatement psMov = null;
 
         try {
-            conectar = conexionMySQL.conectar();
-            if (conectar == null) {
-                System.out.println("No se pudo obtener conexión en Cartera_model.recargarSaldo");
+            conn = conexionMySQL.conectar();
+            if (conn == null) {
                 return false;
             }
 
-            conectar.setAutoCommit(false);
+            conn.setAutoCommit(false);
 
-            // Actualizar saldo 
-            psUpdate = conectar.prepareStatement(sqlUpdateCartera);
+            psUpdate = conn.prepareStatement(sqlUpdateCartera);
             psUpdate.setBigDecimal(1, monto);
             psUpdate.setInt(2, idUsuario);
 
             int filasCartera = psUpdate.executeUpdate();
             if (filasCartera == 0) {
-                System.out.println("No se actualizó la cartera; ¿existe la cartera para ese usuario?");
-                conectar.rollback();
-                conectar.setAutoCommit(true);
+                conn.rollback();
                 return false;
             }
 
-            // Insertar movimiento de recarga 
-            psMov = conectar.prepareStatement(sqlInsertMovimiento);
-            psMov.setInt(1, idUsuario);
-            psMov.setBigDecimal(2, monto);
-            psMov.setString(3, descripcion);
-            psMov.executeUpdate();
+            // INSERT movimiento usando MISMA conexión
+            Movimiento_cartera_model movModel = new Movimiento_cartera_model();
+            dtos.Movimiento_cartera_dtos mov = new dtos.Movimiento_cartera_dtos();
+            mov.setIdUsuario(idUsuario);
+            mov.setIdCompra(null);
+            mov.setTipo("RECARGA");
+            mov.setMonto(monto);
+            mov.setDescripcion(descripcion);
 
-            conectar.commit();
-            conectar.setAutoCommit(true);
+            boolean okMov = movModel.registrarMovimiento(conn, mov);
+            if (!okMov) {
+                conn.rollback();
+                return false;
+            }
+
+            conn.commit();
             return true;
 
         } catch (SQLException e) {
-            System.out.println("Error en Cartera_model.recargarSaldo(): " + e.getMessage());
-            e.printStackTrace();
             try {
-                if (conectar != null) conectar.rollback();
-            } catch (Exception ex) {}
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (Exception ignored) {
+            }
+            e.printStackTrace();
             return false;
+
         } finally {
-            try { if (psMov != null) psMov.close(); } catch (Exception ex) {}
-            try { if (psUpdate != null) psUpdate.close(); } catch (Exception ex) {}
-            try { if (conectar != null) conectar.setAutoCommit(true); } catch (Exception ex) {}
-            conexionMySQL.desconectar(conectar);
+            try {
+                if (psUpdate != null) {
+                    psUpdate.close();
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                }
+            } catch (Exception ignored) {
+            }
+            conexionMySQL.desconectar(conn);
         }
     }
-}
 
+}

@@ -7,7 +7,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -236,6 +238,90 @@ public class Videojuego_imagen_model {
         return img;
     }
 
+    public boolean reemplazarImagenes(int idVideojuego, List<Videojuego_imagen_dtos> imgs) {
+        if (imgs == null) imgs = Collections.emptyList();
+
+        String del = "DELETE FROM videojuego_imagen WHERE id_videojuego = ?";
+        String ins = "INSERT INTO videojuego_imagen(id_videojuego, url_imagen, es_portada, orden) VALUES (?, ?, ?, ?)";
+
+        ConexionMySQL cx = new ConexionMySQL();
+        Connection conn = null;
+        PreparedStatement psDel = null;
+        PreparedStatement psIns = null;
+
+        try {
+            conn = cx.conectar();
+            if (conn == null) return false;
+
+            conn.setAutoCommit(false);
+
+            psDel = conn.prepareStatement(del);
+            psDel.setInt(1, idVideojuego);
+            psDel.executeUpdate();
+
+            if (!imgs.isEmpty()) {
+                // Si ninguna viene como portada, forzamos la primera como portada
+                boolean hayPortada = imgs.stream().anyMatch(Videojuego_imagen_dtos::isEsPortada);
+
+                psIns = conn.prepareStatement(ins);
+                for (int i = 0; i < imgs.size(); i++) {
+                    Videojuego_imagen_dtos img = imgs.get(i);
+                    if (img == null || img.getUrlImagen() == null || img.getUrlImagen().trim().isEmpty()) continue;
+
+                    boolean esPortada = img.isEsPortada() || (!hayPortada && i == 0);
+
+                    psIns.setInt(1, idVideojuego);
+                    psIns.setString(2, img.getUrlImagen().trim());
+                    psIns.setBoolean(3, esPortada);
+
+                    if (img.getOrden() != null) psIns.setInt(4, img.getOrden());
+                    else psIns.setNull(4, Types.INTEGER);
+
+                    psIns.addBatch();
+                }
+                psIns.executeBatch();
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            try { if (conn != null) conn.rollback(); } catch (Exception ignored) {}
+            e.printStackTrace();
+            return false;
+        } finally {
+            try { if (psIns != null) psIns.close(); } catch (Exception ignored) {}
+            try { if (psDel != null) psDel.close(); } catch (Exception ignored) {}
+            try { if (conn != null) conn.setAutoCommit(true); } catch (Exception ignored) {}
+            cx.desconectar(conn);
+        }
+    }
+
+    public int contarImagenes(int idVideojuego) {
+        String sql = "SELECT COUNT(*) c FROM videojuego_imagen WHERE id_videojuego = ?";
+        ConexionMySQL cx = new ConexionMySQL();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = cx.conectar();
+            if (conn == null) return 0;
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idVideojuego);
+            rs = ps.executeQuery();
+            return rs.next() ? rs.getInt("c") : 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception ignored) {}
+            try { if (ps != null) ps.close(); } catch (Exception ignored) {}
+            cx.desconectar(conn);
+        }
+    }
+    
+    
     private void cerrarRecursos(ResultSet rs, PreparedStatement ps, Connection conn, ConexionMySQL conexionMySQL) {
         try { if (rs != null) rs.close(); } catch (Exception ex) {}
         try { if (ps != null) ps.close(); } catch (Exception ex) {}

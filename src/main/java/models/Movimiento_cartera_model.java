@@ -124,12 +124,36 @@ public class Movimiento_cartera_model {
             e.printStackTrace();
             return false;
         } finally {
-            try { if (ps != null) ps.close(); } catch (Exception ex) {}
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
             conexionMySQL.desconectar(conn);
         }
     }
 
-  
+    
+    public boolean registrarMovimiento(Connection conn, Movimiento_cartera_dtos mov) throws SQLException {
+        String sql = "INSERT INTO movimiento_cartera (id_usuario, id_compra, tipo, monto, descripcion) VALUES (?, ?, ?, ?, ?)";
+
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, mov.getIdUsuario());
+
+            if (mov.getIdCompra() != null) {
+                ps.setInt(2, mov.getIdCompra());
+            } else {
+                ps.setNull(2, java.sql.Types.INTEGER);
+            }
+
+            ps.setString(3, mov.getTipo());
+            ps.setBigDecimal(4, mov.getMonto());
+            ps.setString(5, mov.getDescripcion());
+
+            return ps.executeUpdate() > 0;
+        }
+    }
 
     private Movimiento_cartera_dtos crearMovimientoDesdeFila(ResultSet rs) throws SQLException {
         Movimiento_cartera_dtos mov = new Movimiento_cartera_dtos();
@@ -152,9 +176,18 @@ public class Movimiento_cartera_model {
     }
 
     private void cerrarRecursos(ResultSet rs, PreparedStatement ps, Connection conn, ConexionMySQL conexionMySQL) {
-        try { if (rs != null) rs.close(); } catch (Exception ex) {}
-        try { if (ps != null) ps.close(); } catch (Exception ex) {}
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+        } catch (Exception ex) {
+        }
+        try {
+            if (ps != null) {
+                ps.close();
+            }
+        } catch (Exception ex) {
+        }
         conexionMySQL.desconectar(conn);
     }
 }
-

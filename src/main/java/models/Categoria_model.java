@@ -119,9 +119,7 @@ public class Categoria_model {
 
     // Verificar si ya existe una categoría con ese nombre 
     public boolean existeNombre(String nombre) {
-        String sql = "SELECT COUNT(*) AS total "
-                   + "FROM categoria "
-                   + "WHERE nombre = ?";
+        String sql = "SELECT COUNT(*) AS total FROM categoria WHERE nombre = ?";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -132,7 +130,7 @@ public class Categoria_model {
             conn = conexionMySQL.conectar();
             if (conn == null) {
                 System.out.println("No se pudo obtener conexión en Categoria_model.existeNombre");
-                return true;
+                return false; // antes era true
             }
 
             ps = conn.prepareStatement(sql);
@@ -140,24 +138,23 @@ public class Categoria_model {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                int total = rs.getInt("total");
-                return total > 0;
+                return rs.getInt("total") > 0;
             }
+            return false;
 
         } catch (SQLException e) {
             System.out.println("Error en Categoria_model.existeNombre(): " + e.getMessage());
             e.printStackTrace();
+            return false; // antes era true
         } finally {
             cerrarRecursos(rs, ps, conn, conexionMySQL);
         }
-
-        return true;
     }
 
     // Insertar nueva categoría
     public Categoria_dtos insertar(Categoria_dtos categoria) {
         String sql = "INSERT INTO categoria (nombre, descripcion, estado) "
-                   + "VALUES (?, ?, ?)";
+                + "VALUES (?, ?, ?)";
 
         ConexionMySQL conexionMySQL = new ConexionMySQL();
         Connection conn = null;
@@ -174,7 +171,7 @@ public class Categoria_model {
             ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, categoria.getNombre());
             ps.setString(2, categoria.getDescripcion());
-            
+
             String estado = categoria.getEstado();
             if (estado == null || estado.isEmpty()) {
                 estado = "ACTIVA";
@@ -199,8 +196,18 @@ public class Categoria_model {
             e.printStackTrace();
             return null;
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception ex) {}
-            try { if (ps != null) ps.close(); } catch (Exception ex) {}
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception ex) {
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
             conexionMySQL.desconectar(conn);
         }
     }
@@ -234,7 +241,12 @@ public class Categoria_model {
             e.printStackTrace();
             return false;
         } finally {
-            try { if (ps != null) ps.close(); } catch (Exception ex) {}
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
             conexionMySQL.desconectar(conn);
         }
     }
@@ -266,12 +278,15 @@ public class Categoria_model {
             e.printStackTrace();
             return false;
         } finally {
-            try { if (ps != null) ps.close(); } catch (Exception ex) {}
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception ex) {
+            }
             conexionMySQL.desconectar(conn);
         }
     }
-
-    
 
     private Categoria_dtos convertirFilaACategoriaDTO(ResultSet rs) throws SQLException {
         Categoria_dtos c = new Categoria_dtos();
@@ -283,8 +298,18 @@ public class Categoria_model {
     }
 
     private void cerrarRecursos(ResultSet rs, PreparedStatement ps, Connection conn, ConexionMySQL conexionMySQL) {
-        try { if (rs != null) rs.close(); } catch (Exception ex) {}
-        try { if (ps != null) ps.close(); } catch (Exception ex) {}
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+        } catch (Exception ex) {
+        }
+        try {
+            if (ps != null) {
+                ps.close();
+            }
+        } catch (Exception ex) {
+        }
         conexionMySQL.desconectar(conn);
     }
 }

@@ -26,13 +26,6 @@ public class Registro extends HttpServlet {
 
     private final Registro_model registroModel = new Registro_model();
 
-    /**
-     * GET /registro
-     *
-     * Lo vamos a usar principalmente para CU02 (validar correo único),
-     * por ejemplo:
-     *   /registro?accion=checkCorreo&correo=algo@correo.com
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

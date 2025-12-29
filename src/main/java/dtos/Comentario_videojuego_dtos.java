@@ -1,10 +1,9 @@
-
 package dtos;
 
 import java.sql.Timestamp;
 
 public class Comentario_videojuego_dtos {
-   
+
     private int idComentario;
     private int idVideojuego;
     private int idUsuario;
@@ -77,5 +76,15 @@ public class Comentario_videojuego_dtos {
     public void setVisibleAdmin(boolean visibleAdmin) {
         this.visibleAdmin = visibleAdmin;
     }
-    
+
+    private String nicknameUsuario;
+
+    public String getNicknameUsuario() {
+        return nicknameUsuario;
+    }
+
+    public void setNicknameUsuario(String nicknameUsuario) {
+        this.nicknameUsuario = nicknameUsuario;
+    }
+
 }
